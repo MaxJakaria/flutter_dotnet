@@ -161,15 +161,25 @@ class _DepartmentListPageState extends State<DepartmentListPage> {
         titleSpacing: 16,
         title: Row(
           children: [
-            Icon(Icons.school_outlined, size: 22, color: Theme.of(context).colorScheme.onSurface),
+            Icon(
+              Icons.school_outlined,
+              size: 22,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
             const SizedBox(width: 10),
-            Text('Departments', style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+            Text(
+              'Departments',
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+            ),
           ],
         ),
         actions: [
           IconButton(
             onPressed: _refresh,
-            icon: Icon(Icons.refresh, color: Theme.of(context).colorScheme.onSurface),
+            icon: Icon(
+              Icons.refresh,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
             tooltip: 'Refresh',
           ),
         ],
@@ -183,7 +193,9 @@ class _DepartmentListPageState extends State<DepartmentListPage> {
                 Container(
                   height: 50,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: TextField(
@@ -191,15 +203,26 @@ class _DepartmentListPageState extends State<DepartmentListPage> {
                     onChanged: (v) => setState(() => _searchQuery = v),
                     decoration: InputDecoration(
                       isDense: true,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                      prefixIcon: Icon(Icons.search, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 14,
+                      ),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                       hintText: 'Search departments by name or ID',
                       border: InputBorder.none,
                       suffixIcon: _searchQuery.isEmpty
                           ? null
                           : IconButton(
                               onPressed: () => _searchController.clear(),
-                              icon: Icon(Icons.clear, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                              icon: Icon(
+                                Icons.clear,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
                             ),
                     ),
                   ),
@@ -213,7 +236,9 @@ class _DepartmentListPageState extends State<DepartmentListPage> {
                       alignment: Alignment.centerLeft,
                       child: Text(
                         '$count result${count == 1 ? '' : 's'}',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     );
                   },
