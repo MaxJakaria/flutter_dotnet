@@ -8,6 +8,7 @@ abstract class DepartmentRemoteDataSource {
   Future<List<DepartmentModel>> getAllDepartments();
   Future<DepartmentModel> createDepartment(DepartmentModel department);
   Future<void> deleteDepartment(int deptId);
+  Future<void> updateDepartment(DepartmentModel department);
 }
 
 class DepartmentRemoteDataSourceImpl implements DepartmentRemoteDataSource {
@@ -24,7 +25,6 @@ class DepartmentRemoteDataSourceImpl implements DepartmentRemoteDataSource {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'ngrok-skip-browser-warning': 'true',
       },
     );
 
@@ -46,7 +46,6 @@ class DepartmentRemoteDataSourceImpl implements DepartmentRemoteDataSource {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'ngrok-skip-browser-warning': 'true',
       },
       body: json.encode(department.toJson()),
     );
@@ -69,12 +68,31 @@ class DepartmentRemoteDataSourceImpl implements DepartmentRemoteDataSource {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'ngrok-skip-browser-warning': 'true',
       },
     );
 
     if (response.statusCode != 200 && response.statusCode != 204) {
       throw ServerException(message: 'Failed to delete department');
+    }
+  }
+
+  @override
+  Future<void> updateDepartment(DepartmentModel department) async {
+    final uri = Uri.parse(
+      '${ApiConstants.baseUrl}/Departments/${department.departmentId}',
+    );
+
+    final response = await client.put(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: json.encode(department.toJson()),
+    );
+
+    if (response.statusCode != 200 && response.statusCode != 204) {
+      throw ServerException(message: 'Failed to update department');
     }
   }
 }

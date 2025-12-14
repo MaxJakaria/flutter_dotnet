@@ -4,11 +4,13 @@ import 'package:flutter_dotnet/feature/departments/domain/entities/department.da
 class DepartmentTile extends StatefulWidget {
   final Department department;
   final VoidCallback onDelete;
+  final VoidCallback? onEdit;
 
   const DepartmentTile({
     super.key,
     required this.department,
     required this.onDelete,
+    this.onEdit,
   });
 
   @override
@@ -58,6 +60,7 @@ class _DepartmentTileState extends State<DepartmentTile> {
             child: InkWell(
               borderRadius: BorderRadius.circular(12),
               onTap: () {},
+              onLongPress: widget.onEdit,
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 14,

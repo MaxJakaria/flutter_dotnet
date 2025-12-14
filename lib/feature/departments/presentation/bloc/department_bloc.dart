@@ -4,6 +4,7 @@ import 'package:flutter_dotnet/feature/departments/domain/entities/department.da
 import 'package:flutter_dotnet/feature/departments/domain/use_cases/create_department_use_case.dart';
 import 'package:flutter_dotnet/feature/departments/domain/use_cases/delete_department_use_case.dart';
 import 'package:flutter_dotnet/feature/departments/domain/use_cases/get_all_departments_use_case.dart';
+import 'package:flutter_dotnet/feature/departments/domain/use_cases/update_department_use_case.dart';
 
 part 'department_event.dart';
 part 'department_state.dart';
@@ -12,11 +13,13 @@ class DepartmentBloc extends Bloc<DepartmentEvent, DepartmentState> {
   final GetAllDepartmentsUseCase getAllDepartmentsUseCase;
   final CreateDepartmentUseCase createDepartmentUseCase;
   final DeleteDepartmentUseCase deleteDepartmentUseCase;
+  final UpdateDepartmentUseCase updateDepartmentUseCase;
 
   DepartmentBloc({
     required this.getAllDepartmentsUseCase,
     required this.createDepartmentUseCase,
     required this.deleteDepartmentUseCase,
+    required this.updateDepartmentUseCase,
   }) : super(DepartmentInitial()) {
     on<GetDepartmentsEvent>((event, emit) async {
       if (event.withLoading) emit(DepartmentLoading());
@@ -45,6 +48,15 @@ class DepartmentBloc extends Bloc<DepartmentEvent, DepartmentState> {
       result.fold(
         (failure) => emit(DepartmentError(message: failure.message)),
         (success) => add(GetDepartmentsEvent(withLoading: false)),
+      );
+    });
+
+    on<UpdateDepartmentEvent>((event, emit) async {
+      final result = await updateDepartmentUseCase(event.department);
+
+      result.fold(
+        (failure) => emit(DepartmentError(message: failure.message)),
+        (r) => add(GetDepartmentsEvent(withLoading: false)),
       );
     });
   }

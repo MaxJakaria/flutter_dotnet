@@ -55,4 +55,22 @@ class DepartmentRepositoryImpl implements DepartmentRepository {
       return Left(ServerFailure(message: e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> updateDepartment(Department department) async {
+    try {
+      final model = DepartmentModel(
+        departmentId: department.departmentId,
+        name: department.name,
+      );
+
+      await remoteDataSource.updateDepartment(model);
+
+      return const Right(null);
+    } on ServerException catch (e) {
+      return Left(ServerFailure(message: e.message));
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
 }

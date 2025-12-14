@@ -276,6 +276,8 @@ class _DepartmentListPageState extends State<DepartmentListPage> {
                   onSearchChanged: (v) => setState(() => _searchQuery = v),
                   onRefresh: _refresh,
                   onDelete: (department) => _confirmDelete(context, department),
+                  onEdit: (department) =>
+                      _showEditDepartmentSheet(context, department),
                   onAdd: () => _showAddDepartmentSheet(context),
                 );
 
@@ -360,6 +362,17 @@ class _DepartmentListPageState extends State<DepartmentListPage> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (_) => const AddDepartmentSheet(),
+    );
+  }
+
+  void _showEditDepartmentSheet(BuildContext context, Department department) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) => AddDepartmentSheet(initialDepartment: department),
     );
   }
 }

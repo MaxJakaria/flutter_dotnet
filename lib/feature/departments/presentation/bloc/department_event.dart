@@ -33,3 +33,12 @@ class DeleteDepartmentEvent extends DepartmentEvent {
   @override
   List<Object> get props => [deptId];
 }
+
+class UpdateDepartmentEvent extends DepartmentEvent {
+  final Department department;
+
+  const UpdateDepartmentEvent({required this.department});
+
+  @override
+  List<Object> get props => [department];
+}

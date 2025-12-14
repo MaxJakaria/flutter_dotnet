@@ -11,6 +11,7 @@ class DepartmentBody extends StatelessWidget {
   final ValueChanged<String> onSearchChanged;
   final VoidCallback onRefresh;
   final ValueChanged<Department> onDelete;
+  final ValueChanged<Department> onEdit;
   final VoidCallback onAdd;
   final bool showSearchBar;
 
@@ -22,6 +23,7 @@ class DepartmentBody extends StatelessWidget {
     required this.onSearchChanged,
     required this.onRefresh,
     required this.onDelete,
+    required this.onEdit,
     required this.onAdd,
     this.showSearchBar = true,
   });
@@ -91,6 +93,7 @@ class DepartmentBody extends StatelessWidget {
                       itemBuilder: (context, index) => DepartmentTile(
                         department: items[index],
                         onDelete: () => onDelete(items[index]),
+                        onEdit: () => onEdit(items[index]),
                       ),
                     );
                   }
@@ -110,6 +113,7 @@ class DepartmentBody extends StatelessWidget {
                     itemBuilder: (context, index) => DepartmentTile(
                       department: items[index],
                       onDelete: () => onDelete(items[index]),
+                      onEdit: () => onEdit(items[index]),
                     ),
                   );
                 },
@@ -135,6 +139,7 @@ class DepartmentBody extends StatelessWidget {
                 itemBuilder: (context, index) => DepartmentTile(
                   department: items[index],
                   onDelete: () => onDelete(items[index]),
+                  onEdit: () => onEdit(items[index]),
                 ),
               ),
             ),

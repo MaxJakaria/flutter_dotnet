@@ -4,7 +4,9 @@ import 'package:flutter_dotnet/feature/departments/domain/entities/department.da
 import 'package:flutter_dotnet/feature/departments/presentation/bloc/department_bloc.dart';
 
 class AddDepartmentSheet extends StatefulWidget {
-  const AddDepartmentSheet({super.key});
+  final Department? initialDepartment;
+
+  const AddDepartmentSheet({super.key, this.initialDepartment});
 
   @override
   State<AddDepartmentSheet> createState() => _AddDepartmentSheetState();
@@ -15,6 +17,8 @@ class _AddDepartmentSheetState extends State<AddDepartmentSheet> {
   final _nameController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  bool get _isEditing => widget.initialDepartment != null;
+
   @override
   void dispose() {
     _idController.dispose();
@@ -22,18 +26,33 @@ class _AddDepartmentSheetState extends State<AddDepartmentSheet> {
     super.dispose();
   }
 
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialDepartment != null) {
+      _idController.text = widget.initialDepartment!.departmentId.toString();
+      _nameController.text = widget.initialDepartment!.name;
+    }
+  }
+
   void _save() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    final id = int.parse(_idController.text.trim());
+    final id = _isEditing
+        ? widget.initialDepartment!.departmentId
+        : int.parse(_idController.text.trim());
     final name = _nameController.text.trim();
     final newDept = Department(departmentId: id, name: name);
-    context.read<DepartmentBloc>().add(
-      CreateDepartmentEvent(department: newDept),
-    );
-    Navigator.pop(context);
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Creating department...')));
+    if (_isEditing) {
+      context.read<DepartmentBloc>().add(
+        UpdateDepartmentEvent(department: newDept),
+      );
+      Navigator.pop(context);
+    } else {
+      context.read<DepartmentBloc>().add(
+        CreateDepartmentEvent(department: newDept),
+      );
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -53,9 +72,12 @@ class _AddDepartmentSheetState extends State<AddDepartmentSheet> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Create Department',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Text(
+                  _isEditing ? 'Edit Department' : 'Create Department',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.close),
@@ -71,11 +93,13 @@ class _AddDepartmentSheetState extends State<AddDepartmentSheet> {
                   TextFormField(
                     controller: _idController,
                     keyboardType: TextInputType.number,
+                    readOnly: _isEditing,
                     decoration: const InputDecoration(
                       labelText: 'Department ID',
                       prefixIcon: Icon(Icons.numbers),
                     ),
                     validator: (v) {
+                      if (_isEditing) return null;
                       if (v == null || v.isEmpty) return 'Enter ID';
                       if (int.tryParse(v) == null) return 'Enter valid number';
                       return null;
