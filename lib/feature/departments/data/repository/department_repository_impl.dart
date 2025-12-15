@@ -29,12 +29,12 @@ class DepartmentRepositoryImpl implements DepartmentRepository {
     Department department,
   ) async {
     try {
-      final model = DepartmentModel(
+      final deptModel = DepartmentModel(
         departmentId: department.departmentId,
         name: department.name,
       );
 
-      final result = await remoteDataSource.createDepartment(model);
+      final result = await remoteDataSource.createDepartment(deptModel);
       return Right(result);
     } on ServerException catch (e) {
       return Left(ServerFailure(message: e.message));
@@ -59,12 +59,12 @@ class DepartmentRepositoryImpl implements DepartmentRepository {
   @override
   Future<Either<Failure, void>> updateDepartment(Department department) async {
     try {
-      final model = DepartmentModel(
+      final deptModel = DepartmentModel(
         departmentId: department.departmentId,
         name: department.name,
       );
 
-      await remoteDataSource.updateDepartment(model);
+      await remoteDataSource.updateDepartment(deptModel);
 
       return const Right(null);
     } on ServerException catch (e) {

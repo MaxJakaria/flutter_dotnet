@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import '../../../../core/network/api_constants.dart';
 import '../models/department_model.dart';
 
-abstract class DepartmentRemoteDataSource {
+abstract interface class DepartmentRemoteDataSource {
   Future<List<DepartmentModel>> getAllDepartments();
   Future<DepartmentModel> createDepartment(DepartmentModel department);
   Future<void> deleteDepartment(int deptId);
