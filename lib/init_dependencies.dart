@@ -6,86 +6,108 @@ import 'package:flutter_dotnet/feature/departments/domain/use_cases/delete_depar
 import 'package:flutter_dotnet/feature/departments/domain/use_cases/get_all_departments_use_case.dart';
 import 'package:flutter_dotnet/feature/departments/domain/use_cases/update_department_use_case.dart';
 import 'package:flutter_dotnet/feature/departments/presentation/bloc/department_bloc.dart';
+import 'package:flutter_dotnet/feature/students/data/data_sources/student_remote_data_source.dart';
+import 'package:flutter_dotnet/feature/students/data/repository/student_repository_impl.dart';
+import 'package:flutter_dotnet/feature/students/domain/repository/student_repository.dart';
+import 'package:flutter_dotnet/feature/students/domain/use_cases/add_student_use_case.dart';
+import 'package:flutter_dotnet/feature/students/domain/use_cases/delete_student_use_case.dart';
+import 'package:flutter_dotnet/feature/students/domain/use_cases/get_student_by_id_use_case.dart';
+import 'package:flutter_dotnet/feature/students/domain/use_cases/get_students_use_case.dart';
+import 'package:flutter_dotnet/feature/students/domain/use_cases/update_student_use_case.dart';
+import 'package:flutter_dotnet/feature/students/presentation/bloc/student_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter/foundation.dart';
 
 final serviceLocator = GetIt.instance;
 
 Future<void> initDependencies() async {
-  // External dependencies
-  try {
-    serviceLocator.registerLazySingleton(() => http.Client());
-  } catch (e, st) {
-    // Log and throw so caller sees the original failure
-    debugPrint('initDependencies: failed registering http.Client -> $e\n$st');
-    throw Exception('initDependencies: failed registering http.Client -> $e');
-  }
+  // ১. core/external dependencies
+  serviceLocator.registerLazySingleton(() => http.Client());
 
-  // Initialize Data Sources
-  try {
-    serviceLocator.registerLazySingleton<DepartmentRemoteDataSource>(
-      () => DepartmentRemoteDataSourceImpl(client: serviceLocator()),
-    );
-  } catch (e, st) {
-    debugPrint(
-      'initDependencies: failed registering DepartmentRemoteDataSource -> $e\n$st',
-    );
-    throw Exception(
-      'initDependencies: failed registering DepartmentRemoteDataSource -> $e',
-    );
-  }
+  _initDepartmentDependencies();
+  _initStudentDependencies();
+}
 
-  // Initialize Repositories
-  try {
-    serviceLocator.registerLazySingleton<DepartmentRepository>(
-      () => DepartmentRepositoryImpl(remoteDataSource: serviceLocator()),
-    );
-  } catch (e, st) {
-    debugPrint(
-      'initDependencies: failed registering DepartmentRepository -> $e\n$st',
-    );
-    throw Exception(
-      'initDependencies: failed registering DepartmentRepository -> $e',
-    );
-  }
+// ===========================
+// Departments Feature Dependencies
+// ===========================
+void _initDepartmentDependencies() {
+  // Data Source
+  serviceLocator.registerLazySingleton<DepartmentRemoteDataSource>(
+    () => DepartmentRemoteDataSourceImpl(client: serviceLocator()),
+  );
 
-  // Initialize Use Cases
-  try {
-    serviceLocator
-      ..registerFactory(
-        () => GetAllDepartmentsUseCase(repository: serviceLocator()),
-      )
-      ..registerFactory(
-        () => CreateDepartmentUseCase(repository: serviceLocator()),
-      )
-      ..registerFactory(
-        () => DeleteDepartmentUseCase(repository: serviceLocator()),
-      )
-      ..registerFactory(
-        () => UpdateDepartmentUseCase(repository: serviceLocator()),
-      );
-  } catch (e, st) {
-    debugPrint('initDependencies: failed registering UseCases -> $e\n$st');
-    throw Exception('initDependencies: failed registering UseCases -> $e');
-  }
+  // Repository
+  serviceLocator.registerLazySingleton<DepartmentRepository>(
+    () => DepartmentRepositoryImpl(remoteDataSource: serviceLocator()),
+  );
 
-  // Initialize Bloc
-  try {
-    serviceLocator.registerFactory(
-      () => DepartmentBloc(
-        getAllDepartmentsUseCase: serviceLocator(),
-        createDepartmentUseCase: serviceLocator(),
-        deleteDepartmentUseCase: serviceLocator(),
-        updateDepartmentUseCase: serviceLocator(),
-      ),
-    );
-  } catch (e, st) {
-    debugPrint(
-      'initDependencies: failed registering DepartmentBloc -> $e\n$st',
-    );
-    throw Exception(
-      'initDependencies: failed registering DepartmentBloc -> $e',
-    );
-  }
+  // Use Cases
+  // UseCase গুলো স্টেটলেস হওয়ায় Singleton ব্যবহার করা ভালো
+  serviceLocator.registerLazySingleton(
+    () => GetAllDepartmentsUseCase(repository: serviceLocator()),
+  );
+  serviceLocator.registerLazySingleton(
+    () => CreateDepartmentUseCase(repository: serviceLocator()),
+  );
+  serviceLocator.registerLazySingleton(
+    () => DeleteDepartmentUseCase(repository: serviceLocator()),
+  );
+  serviceLocator.registerLazySingleton(
+    () => UpdateDepartmentUseCase(repository: serviceLocator()),
+  );
+
+  // Bloc
+  // Bloc অবশ্যই Factory হতে হবে, কারণ প্রতিবার নতুন স্ক্রিনে নতুন Bloc দরকার।
+  serviceLocator.registerFactory(
+    () => DepartmentBloc(
+      getAllDepartmentsUseCase: serviceLocator(),
+      createDepartmentUseCase: serviceLocator(),
+      deleteDepartmentUseCase: serviceLocator(),
+      updateDepartmentUseCase: serviceLocator(),
+    ),
+  );
+}
+
+// ===========================
+// Students Feature Dependencies
+// ===========================
+void _initStudentDependencies() {
+  // Data Source
+  serviceLocator.registerLazySingleton<StudentRemoteDataSource>(
+    () => StudentRemoteDataSourceImpl(client: serviceLocator()),
+  );
+
+  // Repository
+  serviceLocator.registerLazySingleton<StudentRepository>(
+    () => StudentRepositoryImpl(remoteDataSource: serviceLocator()),
+  );
+
+  // Use Cases
+  serviceLocator.registerLazySingleton(
+    () => GetStudentsUseCase(repository: serviceLocator()),
+  );
+  serviceLocator.registerLazySingleton(
+    () => GetStudentByIdUseCase(repository: serviceLocator()),
+  );
+  serviceLocator.registerLazySingleton(
+    () => AddStudentUseCase(repository: serviceLocator()),
+  );
+  serviceLocator.registerLazySingleton(
+    () => UpdateStudentUseCase(repository: serviceLocator()),
+  );
+  serviceLocator.registerLazySingleton(
+    () => DeleteStudentUseCase(repository: serviceLocator()),
+  );
+
+  // Bloc
+  serviceLocator.registerFactory(
+    () => StudentBloc(
+      addStudentUseCase: serviceLocator(),
+      getStudentsUseCase: serviceLocator(),
+      getStudentByIdUseCase: serviceLocator(),
+      updateStudentUseCase: serviceLocator(),
+      deleteStudentUseCase: serviceLocator(),
+    ),
+  );
 }

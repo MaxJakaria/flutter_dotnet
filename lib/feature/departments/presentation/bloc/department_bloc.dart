@@ -56,7 +56,7 @@ class DepartmentBloc extends Bloc<DepartmentEvent, DepartmentState> {
 
       result.fold(
         (failure) => emit(DepartmentError(message: failure.message)),
-        (r) => add(GetDepartmentsEvent(withLoading: false)),
+        (success) => add(GetDepartmentsEvent(withLoading: false)),
       );
     });
   }
