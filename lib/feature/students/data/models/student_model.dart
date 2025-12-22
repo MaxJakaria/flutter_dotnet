@@ -7,21 +7,27 @@ class StudentModel extends Student {
     required super.email,
     required super.cgpa,
     required super.deptId,
+    super.departmentName,
   });
 
   factory StudentModel.fromJson(Map<String, dynamic> json) {
     return StudentModel(
-      studentId: (json['studentId'] as num?)?.toInt() ?? 0,
+      studentId: (json['id'] as num?)?.toInt() ?? 0,
       name: json['name'] ?? '',
       email: json['email'] ?? '',
       cgpa: (json['cgpa'] as num?)?.toDouble() ?? 0.0,
       deptId: (json['departmentId'] as num?)?.toInt() ?? 0,
+      departmentName: json['department'] is String
+          ? json['department'] as String?
+          : (json['department'] is Map
+                ? (json['department'] as Map)['name'] as String?
+                : null),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'studentId': studentId,
+      'id': studentId,
       'name': name,
       'email': email,
       'cgpa': cgpa,
@@ -30,6 +36,6 @@ class StudentModel extends Student {
   }
 
   Map<String, dynamic> toUpdateJson() {
-    return {'studentId': studentId, 'name': name, 'departmentId': deptId};
+    return {'name': name, 'email': email, 'cgpa': cgpa, 'departmentId': deptId};
   }
 }

@@ -4,6 +4,7 @@ class Student {
   final String email;
   final double cgpa;
   final int deptId;
+  final String? departmentName;
 
   Student({
     required this.studentId,
@@ -11,6 +12,7 @@ class Student {
     required this.email,
     required this.cgpa,
     required this.deptId,
+    this.departmentName,
   });
 
   Student copyWith({
@@ -19,6 +21,7 @@ class Student {
     String? email,
     double? cgpa,
     int? deptId,
+    String? departmentName,
   }) {
     return Student(
       studentId: studentId ?? this.studentId,
@@ -26,6 +29,7 @@ class Student {
       email: email ?? this.email,
       cgpa: cgpa ?? this.cgpa,
       deptId: deptId ?? this.deptId,
+      departmentName: departmentName ?? this.departmentName,
     );
   }
 }

@@ -25,14 +25,17 @@ class StudentRemoteDataSourceImpl implements StudentRemoteDataSource {
   @override
   Future<void> addStudent(StudentModel student) async {
     final response = await client.post(
-      Uri.parse('${ApiConstants.baseUrl}/Students'),
-
+      Uri.parse('${ApiConstants.baseUrl}/students'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-
-      body: json.encode(student.toJson()),
+      body: json.encode({
+        'name': student.name,
+        'email': student.email,
+        'cgpa': student.cgpa,
+        'departmentId': student.deptId,
+      }),
     );
 
     if (response.statusCode != 201 && response.statusCode != 200) {
@@ -43,8 +46,7 @@ class StudentRemoteDataSourceImpl implements StudentRemoteDataSource {
   @override
   Future<List<StudentModel>> getStudents() async {
     final response = await client.get(
-      Uri.parse('${ApiConstants.baseUrl}/Students'),
-
+      Uri.parse('${ApiConstants.baseUrl}/students?page=1&pageSize=100'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -52,9 +54,10 @@ class StudentRemoteDataSourceImpl implements StudentRemoteDataSource {
     );
 
     if (response.statusCode == 200) {
-      final List<dynamic> data = jsonDecode(response.body);
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
+      final List<dynamic> items = responseData['data'] ?? [];
 
-      return data.map((e) => StudentModel.fromJson(e)).toList();
+      return items.map((e) => StudentModel.fromJson(e)).toList();
     } else {
       throw ServerException(
         message: 'Failed to load students: ${response.statusCode}',
@@ -65,8 +68,7 @@ class StudentRemoteDataSourceImpl implements StudentRemoteDataSource {
   @override
   Future<StudentModel> getStudentsById(int studentId) async {
     final response = await client.get(
-      Uri.parse('${ApiConstants.baseUrl}/Students/$studentId'),
-
+      Uri.parse('${ApiConstants.baseUrl}/students/$studentId'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
@@ -83,13 +85,11 @@ class StudentRemoteDataSourceImpl implements StudentRemoteDataSource {
   @override
   Future<void> updateStudent(StudentModel student) async {
     final response = await client.put(
-      Uri.parse('${ApiConstants.baseUrl}/Students/${student.studentId}'),
-
+      Uri.parse('${ApiConstants.baseUrl}/students/${student.studentId}'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-
       body: jsonEncode(student.toUpdateJson()),
     );
 
@@ -101,8 +101,7 @@ class StudentRemoteDataSourceImpl implements StudentRemoteDataSource {
   @override
   Future<void> deleteStudent(int studentId) async {
     final response = await client.delete(
-      Uri.parse('${ApiConstants.baseUrl}/Students/$studentId'),
-
+      Uri.parse('${ApiConstants.baseUrl}/students/$studentId'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',

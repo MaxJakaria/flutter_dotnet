@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotnet/core/presentation/pages/dashboard_page.dart';
 import 'package:flutter_dotnet/core/theme/app_theme.dart';
 import 'package:flutter_dotnet/feature/departments/presentation/bloc/department_bloc.dart';
-import 'package:flutter_dotnet/feature/departments/presentation/pages/department_list_page.dart';
 import 'package:flutter_dotnet/feature/students/presentation/bloc/student_bloc.dart';
 import 'package:flutter_dotnet/init_dependencies.dart';
 
@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
         darkTheme: AppTheme.darkTheme,
         themeMode: ThemeMode.system,
 
-        home: DepartmentListPage(),
+        home: DashboardPage(),
       ),
     );
   }
